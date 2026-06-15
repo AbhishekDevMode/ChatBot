@@ -14,11 +14,19 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static('uploads'));
 
+import path from 'path';
+
+// ... (other imports)
+const __dirname = path.resolve();
+
 app.use('/api/auth',authRouter);
 app.use('/api/message',messageRouter);
 app.use('/api/user/',userRouter);
-app.get('/', (req, res) => {
-    res.send("hi,abhishek server is running");
+
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 });
  
 server.listen(PORT, () => {
