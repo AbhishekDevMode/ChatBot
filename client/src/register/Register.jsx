@@ -25,7 +25,7 @@ console.log(inputData);
     const handelSubmit=async(e)=>{
         e.preventDefault();
         setLoading(true)
-        if(inputData.password !== inputData.confpassword.toLowerCase()){
+        if(inputData.password !== inputData.confpassword){
             setLoading(false)
             return toast.error("Password Dosen't match")
         }
@@ -50,119 +50,114 @@ console.log(inputData);
     }
 
   return (
-    <div className='flex flex-col items-center justify-center mix-w-full mx-auto'>
-            <div className='w-full p-6 rounded-lg shadow-lg
-          bg-gray-400 bg-clip-padding
-           backderop-filter backdrop-blur-lg bg-opacity-0'>
-  <h1 className='text-3xl font-bold text-center text-gray-300'>Register
-                    <span className='text-gray-950'> Chatters </span>
-                    </h1>
-                    <form onSubmit={handelSubmit} className='flex flex-col text-black'>
+        <div className='flex flex-col items-center justify-center min-w-full mx-auto py-10'>
+            <div className='w-full max-w-md p-8 rounded-2xl glass-panel'>
+                <h1 className='text-4xl font-bold text-center text-white mb-2'>
+                    Register <span className='text-sky-400'>Chatters</span>
+                </h1>
+                <p className='text-sm text-center text-gray-300 mb-8'>Create an account to get started.</p>
+                
+                <form onSubmit={handelSubmit} className='flex flex-col gap-4'>
                     <div>
-                            <label className='label p-2' >
-                                <span className='font-bold text-gray-950 text-xl label-text'>fullname :</span>
-                            </label>
-                            <input
-                                id='fullname'
-                                type='text'
-                                onChange={handelInput}
-                                placeholder='Enter Full Name'
-                                required
-                                className='w-full input input-bordered h-10' />
-                        </div>
-                        <div>
-                            <label className='label p-2' >
-                                <span className='font-bold text-gray-950 text-xl label-text'>username :</span>
-                            </label>
-                            <input
-                                id='username'
-                                type='text'
-                                onChange={handelInput}
-                                placeholder='Enter UserName'
-                                required
-                                className='w-full input input-bordered h-10' />
-                        </div>
-                        <div>
-                            <label className='label p-2' >
-                                <span className='font-bold text-gray-950 text-xl label-text'>Email :</span>
-                            </label>
-                            <input
-                                id='email'
-                                type='email'
-                                onChange={handelInput}
-                                placeholder='Enter email'
-                                required
-                                className='w-full input input-bordered h-10' />
-                        </div>
-                        <div>
-                            <label className='label p-2' >
-                                <span className='font-bold text-gray-950 text-xl label-text'>Password :</span>
-                            </label>
-                            <input
-                                id='password'
-                                type='password'
-                                onChange={handelInput}
-                                placeholder='Enter password'
-                                required
-                                className='w-full input input-bordered h-10' />
-                        </div>
-                        <div>
-                            <label className='label p-2' >
-                                <span className='font-bold text-gray-950 text-xl label-text'>Conf.Password :</span>
-                            </label>
-                            <input
-                                id='confpassword'
-                                type='text'
-                                onChange={handelInput}
-                                placeholder='Enter Confirm password'
-                                required
-                                className='w-full input input-bordered h-10' />
-                        </div>
-
-                        <div
-                         id='gender' className="flex gap-2">
-                        <label className="cursor-pointer label flex gap-2">
-                        <span className="label-text font-semibold text-gray-950">male</span>
-                        <input 
-                        onChange={()=>selectGender('male')}
-                        checked={inputData.gender === 'male'}
-                        type='checkbox' 
-                        className="checkbox checkbox-info"/>
+                        <label className='label p-1 mb-1'>
+                            <span className='font-medium text-gray-200 text-sm'>Full Name</span>
                         </label>
-                        <label className="cursor-pointer label flex gap-2">
-                        <span className="label-text font-semibold text-gray-950">female</span>
-                        <input 
-                        checked={inputData.gender === 'female'}
-                        onChange={()=>selectGender('female')}
-                        type='checkbox' 
-                        className="checkbox checkbox-info"/>
-                        </label>
-                        </div>
-
-                        <button type='submit'
-                            className='mt-4 self-center 
-                            w-auto px-2 py-1 bg-gray-950 
-                            text-lg hover:bg-gray-900 
-                            text-white rounded-lg hover: scale-105'>
-                           {loading ? "loading..":"Register"}
-                            </button>
-                    </form>
-
-                    <div className='pt-2'>
-                        <p className='text-sm font-semibold
-                         text-gray-800'>
-                            Dont have an Acount ? <Link to={'/login'}>
-                                <span
-                                    className='text-gray-950 
-                            font-bold underline cursor-pointer
-                             hover:text-green-950'>
-                                    Login Now!!
-                                </span>
-                            </Link>
-                        </p>
+                        <input
+                            id='fullname'
+                            type='text'
+                            onChange={handelInput}
+                            placeholder='Enter Full Name'
+                            required
+                            className='w-full px-4 py-3 rounded-lg glass-input text-sm' />
                     </div>
+                    <div>
+                        <label className='label p-1 mb-1'>
+                            <span className='font-medium text-gray-200 text-sm'>Username</span>
+                        </label>
+                        <input
+                            id='username'
+                            type='text'
+                            onChange={handelInput}
+                            placeholder='Enter Username'
+                            required
+                            className='w-full px-4 py-3 rounded-lg glass-input text-sm' />
+                    </div>
+                    <div>
+                        <label className='label p-1 mb-1'>
+                            <span className='font-medium text-gray-200 text-sm'>Email</span>
+                        </label>
+                        <input
+                            id='email'
+                            type='email'
+                            onChange={handelInput}
+                            placeholder='Enter email'
+                            required
+                            className='w-full px-4 py-3 rounded-lg glass-input text-sm' />
+                    </div>
+                    <div>
+                        <label className='label p-1 mb-1'>
+                            <span className='font-medium text-gray-200 text-sm'>Password</span>
+                        </label>
+                        <input
+                            id='password'
+                            type='password'
+                            onChange={handelInput}
+                            placeholder='Enter password'
+                            required
+                            className='w-full px-4 py-3 rounded-lg glass-input text-sm' />
+                    </div>
+                    <div>
+                        <label className='label p-1 mb-1'>
+                            <span className='font-medium text-gray-200 text-sm'>Confirm Password</span>
+                        </label>
+                        <input
+                            id='confpassword'
+                            type='password'
+                            onChange={handelInput}
+                            placeholder='Confirm password'
+                            required
+                            className='w-full px-4 py-3 rounded-lg glass-input text-sm' />
+                    </div>
+
+                    <div id='gender' className="flex gap-4 mt-2">
+                        <label className="cursor-pointer flex items-center gap-2">
+                            <input 
+                                onChange={()=>selectGender('male')}
+                                checked={inputData.gender === 'male'}
+                                type='checkbox' 
+                                className="checkbox checkbox-sm checkbox-info rounded-sm border-gray-400"
+                            />
+                            <span className="font-medium text-gray-200 text-sm">Male</span>
+                        </label>
+                        <label className="cursor-pointer flex items-center gap-2">
+                            <input 
+                                checked={inputData.gender === 'female'}
+                                onChange={()=>selectGender('female')}
+                                type='checkbox' 
+                                className="checkbox checkbox-sm checkbox-info rounded-sm border-gray-400"
+                            />
+                            <span className="font-medium text-gray-200 text-sm">Female</span>
+                        </label>
+                    </div>
+
+                    <button type='submit'
+                        disabled={loading}
+                        className='mt-4 w-full py-3 bg-sky-500 hover:bg-sky-400 text-white font-semibold rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'>
+                        {loading ? <span className="loading loading-spinner loading-sm"></span> : "Register"}
+                    </button>
+                </form>
+
+                <div className='pt-6 text-center'>
+                    <p className='text-sm text-gray-300'>
+                        Already have an account? <Link to={'/login'}>
+                            <span className='text-sky-400 font-semibold hover:text-sky-300 hover:underline transition-colors'>
+                                Login Now!
+                            </span>
+                        </Link>
+                    </p>
+                </div>
            </div>
-           </div>
+        </div>
   )
 }
 

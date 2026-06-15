@@ -19,7 +19,13 @@ const messageSchema = new mongoose.Schema(
     conversationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Conversation"
-    }
+    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
+    ]
   },
   { timestamps: true }
 );

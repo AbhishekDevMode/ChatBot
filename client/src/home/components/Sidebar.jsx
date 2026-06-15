@@ -6,8 +6,9 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom'
 import { IoArrowBackSharp } from 'react-icons/io5';
 import { BiLogOut } from "react-icons/bi";
-import userConversation from '../../Zustans/useConversation';
+import userConversation from '../../zustand/useConversation';
 import { useSocketContext } from '../../context/SocketContext';
+import ProfileModal from './ProfileModal';
 
 const Sidebar = ({ onSelectUser }) => {
 
@@ -21,17 +22,19 @@ const Sidebar = ({ onSelectUser }) => {
     const [newMessageUsers, setNewMessageUsers] = useState('');
     const {messages , setMessage, selectedConversation ,  setSelectedConversation} = userConversation();
     const { onlineUser , socket} = useSocketContext();
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
     const nowOnline = chatUser.map((user)=>(user._id));
     //chats function
     const isOnline = nowOnline.map(userId => onlineUser.includes(userId));
 
-    useEffect(()=>{
-        socket?.on("newMessage",(newMessage)=>{
-            setNewMessageUsers(newMessage)
-        })
-        return ()=> socket?.off("newMessage");
-    },[socket,messages])
+    useEffect(() => {
+        const handleNewMessage = (newMessage) => {
+            setNewMessageUsers(newMessage);
+        };
+        socket?.on("newMessage", handleNewMessage);
+        return () => socket?.off("newMessage", handleNewMessage);
+    }, [socket, messages]);
 
     //show user with u chatted
     useEffect(() => {
@@ -120,117 +123,119 @@ const Sidebar = ({ onSelectUser }) => {
 
     }
 
+    
     return (
-        <div className='h-full w-auto px-1'>
-            <div className='flex justify-between gap-2'>
-                <form onSubmit={handelSearchSubmit} className='w-auto flex items-center justify-between bg-white rounded-full '>
+        <div className='h-full flex flex-col w-auto'>
+            <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
+            
+            {/* Header / Search */}
+            <div className='flex items-center justify-between gap-3 mb-4'>
+                <form onSubmit={handelSearchSubmit} className='flex-1 flex items-center glass-input rounded-full px-1 py-1'>
                     <input
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
                         type='text'
-                        className='px-4 w-auto bg-transparent outline-none rounded-full'
-                        placeholder='search user'
+                        className='w-full bg-transparent outline-none px-3 text-sm placeholder-gray-400'
+                        placeholder='Search users...'
                     />
-                    <button className='btn btn-circle bg-sky-700 hover:bg-gray-950'>
-                        <FaSearch />
+                    <button className='btn btn-circle btn-sm bg-sky-500 hover:bg-sky-400 border-none text-white'>
+                        <FaSearch size={14}/>
                     </button>
                 </form>
-                <img
-                    onClick={() => navigate(`/profile/${authUser?._id}`)}
-                    src={authUser?.profilepic}
-                    className='self-center h-12 w-12 hover:scale-110 cursor-pointer' />
+                <div className="relative group">
+                    <img
+                        onClick={() => setIsProfileModalOpen(true)}
+                        src={authUser?.profilepic}
+                        className='h-10 w-10 rounded-full object-cover border-2 border-sky-400 cursor-pointer transition-transform duration-300 transform group-hover:scale-110 shadow-lg' 
+                        alt="Profile"
+                    />
+                    <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-gray-900 rounded-full"></div>
+                </div>
             </div>
-            <div className='divider px-3'></div>
-            {searchUser?.length > 0 ? (
-                <>
-                    <div className="min-h-[70%] max-h-[80%] m overflow-y-auto scrollbar ">
-                        <div className='w-auto'>
-                            {searchUser.map((user, index) => (
-                                <div key={user._id}>
-                                    <div
-                                        onClick={() => handelUserClick(user)}
-                                        className={`flex gap-3 
-                                                items-center rounded 
-                                                p-2 py-1 cursor-pointer
-                                                ${selectedUserId === user?._id ? 'bg-sky-500' : ''
-                                            } `}>
-                                        {/*Socket is Online*/}
-                                        <div className={`avatar ${isOnline[index] ? 'online':''}`}>
-                                            <div className="w-12 rounded-full">
-                                                <img src={user.profilepic} alt='user.img' />
-                                            </div>
-                                        </div>
-                                        <div className='flex flex-col flex-1'>
-                                            <p className='font-bold text-gray-950'>{user.username}</p>
-                                        </div>
+            
+            <div className='divider my-0 h-[1px] bg-gray-700 opacity-30'></div>
+            
+            {/* User List */}
+            <div className="flex-1 overflow-y-auto overflow-x-hidden pr-1 -mr-1 mt-2 space-y-1">
+                {searchUser?.length > 0 ? (
+                    <>
+                        <div className="flex items-center gap-2 mb-2 px-1">
+                            <button onClick={handSearchback} className='p-1.5 rounded-full hover:bg-gray-700 text-gray-300 transition-colors'>
+                                <IoArrowBackSharp size={20} />
+                            </button>
+                            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Search Results</span>
+                        </div>
+                        {searchUser.map((user, index) => (
+                            <div
+                                key={user._id}
+                                onClick={() => handelUserClick(user)}
+                                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 group
+                                    ${selectedUserId === user?._id ? 'bg-sky-500 bg-opacity-20 border border-sky-500 border-opacity-30' : 'hover:bg-gray-800 hover:bg-opacity-50'} 
+                                `}>
+                                <div className={`avatar ${isOnline[index] ? 'online':''}`}>
+                                    <div className="w-10 h-10 rounded-full shadow-sm">
+                                        <img src={user.profilepic} alt={user.username} className="object-cover" />
                                     </div>
-                                    <div className='divider divide-solid px-3 h-[1px]'></div>
                                 </div>
-                            )
-                            )}
-                        </div>
-                    </div>
-                    <div className='mt-auto px-1 py-1 flex'>
-                        <button onClick={handSearchback} className='bg-white rounded-full px-2 py-1 self-center'>
-                            <IoArrowBackSharp size={25} />
-                        </button>
+                                <div className='flex flex-col flex-1 min-w-0'>
+                                    <p className={`font-semibold truncate ${selectedUserId === user?._id ? 'text-sky-300' : 'text-gray-200 group-hover:text-white'}`}>
+                                        {user.username}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </>
+                ) : (
+                    <>
+                        {chatUser.length === 0 ? (
+                            <div className='flex flex-col items-center justify-center h-full text-center px-4'>
+                                <span className="text-4xl mb-3">👋</span>
+                                <h1 className='font-bold text-lg text-gray-300 mb-1'>It's quiet here</h1>
+                                <p className='text-sm text-gray-500'>Search for a user to start chatting.</p>
+                            </div>
+                        ) : (
+                            <>
+                                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 mb-2 block mt-2">Recent Chats</span>
+                                {chatUser.map((user, index) => (
+                                    <div
+                                        key={user._id}
+                                        onClick={() => handelUserClick(user)}
+                                        className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 group
+                                            ${selectedUserId === user?._id ? 'bg-sky-500 bg-opacity-20 border border-sky-500 border-opacity-30' : 'hover:bg-gray-800 hover:bg-opacity-50'} 
+                                        `}>
 
-                    </div>
-                </>
-            ) : (
-                <>
-                    <div className="min-h-[70%] max-h-[80%] m overflow-y-auto scrollbar ">
-                        <div className='w-auto'>
-                            {chatUser.length === 0 ? (
-                                <>
-                                    <div className='font-bold items-center flex flex-col text-xl text-yellow-500'>
-                                        <h1>Why are you Alone!!🤔</h1>
-                                        <h1>Search username to chat</h1>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    {chatUser.map((user, index) => (
-                                        <div key={user._id}>
-                                            <div
-                                                onClick={() => handelUserClick(user)}
-                                                className={`flex gap-3 
-                                                items-center rounded 
-                                                p-2 py-1 cursor-pointer
-                                                ${selectedUserId === user?._id ? 'bg-sky-500' : ''
-                                                    } `}>
-
-                                                {/*Socket is Online*/}
-                                                <div className={`avatar ${isOnline[index] ? 'online':''}`}>
-                                                    <div className="w-12 rounded-full">
-                                                        <img src={user.profilepic} alt='user.img' />
-                                                    </div>
-                                                </div>
-                                                <div className='flex flex-col flex-1'>
-                                                    <p className='font-bold text-gray-950'>{user.username}</p>
-                                                </div>
-                                                    <div>
-                                                        { newMessageUsers.reciverId === authUser._id && newMessageUsers.senderId === user._id ?
-                                                    <div className="rounded-full bg-green-700 text-sm text-white px-[4px]">+1</div>:<></>
-                                                        }
-                                                    </div>
+                                        <div className={`avatar ${isOnline[index] ? 'online':''}`}>
+                                            <div className="w-10 h-10 rounded-full shadow-sm">
+                                                <img src={user.profilepic} alt={user.username} className="object-cover" />
                                             </div>
-                                            <div className='divider divide-solid px-3 h-[1px]'></div>
                                         </div>
-                                    )
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    </div>
-                    <div className='mt-auto px-1 py-1 flex'>
-                        <button onClick={handelLogOut} className='hover:bg-red-600  w-10 cursor-pointer hover:text-white rounded-lg'>
-                            <BiLogOut size={25} />
-                        </button>
-                        <p className='text-sm py-1'>Logout</p>
-                    </div>
-                </>
-            )}
+                                        <div className='flex flex-col flex-1 min-w-0'>
+                                            <p className={`font-semibold truncate ${selectedUserId === user?._id ? 'text-sky-300' : 'text-gray-200 group-hover:text-white'}`}>
+                                                {user.username}
+                                            </p>
+                                        </div>
+                                        {newMessageUsers.receiverId === authUser._id && newMessageUsers.senderId === user._id && (
+                                            <div className="w-3 h-3 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.8)]"></div>
+                                        )}
+                                    </div>
+                                ))}
+                            </>
+                        )}
+                    </>
+                )}
+            </div>
+            
+            {/* Footer / Logout */}
+            <div className='mt-3 pt-3 border-t border-gray-700 border-opacity-30 flex items-center justify-between px-1'>
+                <button 
+                    onClick={handelLogOut} 
+                    className='flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-red-400 hover:bg-red-400 hover:bg-opacity-10 rounded-lg transition-colors group'
+                    title="Logout"
+                >
+                    <BiLogOut size={22} className="group-hover:-translate-x-1 transition-transform" />
+                    <span className='text-sm font-medium'>Logout</span>
+                </button>
+            </div>
         </div>
     )
 }

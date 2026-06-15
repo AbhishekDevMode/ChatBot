@@ -5,6 +5,7 @@ import { Route ,Routes } from "react-router-dom";
 import Register from "./register/Register.jsx";
 import Home from "./home/Home.jsx";
 import { VerifyUser } from "./utils/VerifyUser.jsx";
+import Profile from "./profile/Profile.jsx";
 function App() {
   
   return (
@@ -14,7 +15,8 @@ function App() {
         <Route path="/login" element={<Login/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route element={<VerifyUser/>}>
-        <Route path="/" element={<Home/>}/>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/profile/:id" element={<Profile/>}/>
         </Route>
       </Routes>
       <ToastContainer/>

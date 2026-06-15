@@ -18,8 +18,7 @@ export const getUserBySearch = async (req, res) => {
         }
       ]
     })
-      .select("-password")
-      .select("email username");
+      .select("-password");
     res.json(users);
   } catch (error) {
     res.status(500).send({
@@ -40,13 +39,13 @@ export const getCurrentChatters = async (req, res) => {
       return res.status(200).send([]);
     const participantsIDs = currentChatters.reduce((ids, conversation) => {
       const otherParticipants = conversation.participants.filter(
-        (id) => id !== currentUserID
+        (id) => id.toString() !== currentUserID.toString()
       );
       return [...ids,...otherParticipants];
-    });
+    }, []);
     const otherParticipantsIDs=participantsIDs.filter(id=>id.toString() !== currentUserID.toString());
-    const user=await User.find({_id:{$in:otherParticipantsIDs}}).selct("-password").select("-email");
-    const users=otherParticipantsIDs.map(id=>user.find(user._id.toString()==id.toString()));
+    const user=await User.find({_id:{$in:otherParticipantsIDs}}).select("-password").select("-email");
+    const users=otherParticipantsIDs.map(id=>user.find(u=>u._id.toString()==id.toString()));
     
     res.status(200).send(users);
 
@@ -54,6 +53,37 @@ export const getCurrentChatters = async (req, res) => {
     res.status(500).send({
       success: false,
       message: error
+    });
+    console.log(error);
+  }
+};
+
+export const updateProfilePic = async (req, res) => {
+  try {
+    const currentUserID = req.user._id;
+    if (!req.file) {
+      return res.status(400).send({ success: false, message: "No image file provided" });
+    }
+    
+    // Construct URL for the uploaded file
+    const profilePicUrl = `/uploads/${req.file.filename}`;
+    
+    // Update user in database
+    const updatedUser = await User.findByIdAndUpdate(
+      currentUserID,
+      { profilepic: profilePicUrl },
+      { returnDocument: 'after' }
+    ).select("-password");
+    
+    res.status(200).send({
+      success: true,
+      message: "Profile picture updated successfully",
+      user: updatedUser
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: error.message || error
     });
     console.log(error);
   }

@@ -16,10 +16,10 @@ export const userRegsiter = async (req, res) => {
     const hashPassword = bcryptjs.hashSync(password, 10);
     const profileBoy =
       profilepic ||
-      `https://avatar.iran.liara.run/public/boy?username=${username}`;
+      `https://ui-avatars.com/api/?name=${username}&background=random`;
     const profileGirl =
       profilepic ||
-      `https://avatar.iran.liara.run/public/girl?username=${username}`;
+      `https://ui-avatars.com/api/?name=${username}&background=random`;
     const newUser = new User({
       fullname,
       username,

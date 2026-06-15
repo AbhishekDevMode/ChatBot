@@ -15,23 +15,17 @@ const Home = () => {
     setIsSidebarVisible(true);
     setSelectedUser(null);
   }
-  return (
 
-    <div className='flex justify-between min-w-full
-     md:min-w-[550px] md:max-w-[65%]
-      px-2 h-[95%] md:h-full  
-      rounded-xl shadow-lg
-       bg-gray-400 bg-clip-padding
-        backdrop-filter backdrop-blur-lg 
-        bg-opacity-0'
-        >
-      <div className={`w-full py-2 md:flex ${isSidebarVisible ? '' : 'hidden'}`}>
-      <Sidebar onSelectUser={handelUserSelect}/>
+  return (
+    <div className='flex justify-between w-[95%] md:w-full md:max-w-5xl h-[95vh] md:h-[85vh] rounded-2xl glass-panel overflow-hidden mx-auto my-auto'>
+      <div className={`w-full md:w-1/3 py-2 px-2 flex flex-col ${isSidebarVisible ? '' : 'hidden md:flex'}`}>
+        <Sidebar onSelectUser={handelUserSelect}/>
       </div>
-      <div className={`divider divider-horizontal px-3 md:flex
-         ${isSidebarVisible ? '' : 'hidden'} ${selectedUser ? 'block' : 'hidden'}`}></div>
-      <div className={`flex-auto ${selectedUser ? '' : 'hidden md:flex'} bg-gray-200}`}>
-      <MessageContainer onBackUser={handelShowSidebar}/>
+      
+      <div className={`divider divider-horizontal mx-0 w-[1px] bg-gray-700 opacity-30 md:flex ${isSidebarVisible ? '' : 'hidden'} ${selectedUser ? 'block' : 'hidden'}`}></div>
+      
+      <div className={`flex-auto ${selectedUser ? '' : 'hidden md:flex'} bg-gray-900 bg-opacity-40 backdrop-blur-md relative`}>
+        <MessageContainer onBackUser={handelShowSidebar}/>
       </div>
     </div>
   );
