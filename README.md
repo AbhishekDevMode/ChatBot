@@ -2,29 +2,28 @@
 
 A full-stack, responsive chatbot application built using the **MERN Stack** (MongoDB, Express.js, React.js, Node.js). This application features a sleek user interface, secure user authentication, and persistent chat sessions.
 
-🔗 **[Live Demo](https://chatbot-xqyt.onrender.com)** ---
+🔗[Live Demo](https://chatbot-xqyt.onrender.com)
 
-## 🚀 Features
+🚀 Features
 
-* **Secure Authentication:** User login and signup protected by JSON Web Tokens (JWT) and HTTP-only cookies.
-* **Persistent Chat History:** Seamlessly preserves conversation threads across sessions using structured database models.
-* **Asynchronous Streaming UX:** Dynamic, real-time message state updates with smooth frontend UI transitions.
-* **Responsive UI:** Fully optimized design that looks great on mobile, tablet, and desktop viewports.
-* **RESTful Architecture:** Clean separation of concerns with structured API routes for users and messages.
+Secure Authentication: User login and signup protected by JSON Web Tokens (JWT) and HTTP-only cookies.
+Persistent Chat History: Seamlessly preserves conversation threads across sessions using structured database models.
+Asynchronous Streaming UX: Dynamic, real-time message state updates with smooth frontend UI transitions.
+Responsive UI: Fully optimized design that looks great on mobile, tablet, and desktop viewports.
+RESTful Architecture: Clean separation of concerns with structured API routes for users and messages.
+
+
+🛠️ Tech Stack
+
+Frontend: React.js, Tailwind CSS (or Bootstrap/CSS depending on your setup), Vite
+Backend: Node.js, Express.js
+Database: MongoDB, Mongoose ORM
+Authentication: JWT (JSON Web Tokens), bcryptjs, zustand
+Deployment: Render (Backend/Full-Stack)
 
 ---
 
-## 🛠️ Tech Stack
-
-* **Frontend:** React.js, Tailwind CSS (or Bootstrap/CSS depending on your setup), Vite
-* **Backend:** Node.js, Express.js
-* **Database:** MongoDB, Mongoose ORM
-* **Authentication:** JWT (JSON Web Tokens), bcryptjs
-* **Deployment:** Render (Backend/Full-Stack)
-
----
-
-## 📦 Project Structure
+📦 Project Structure
 
 ```text
 ├── server/
