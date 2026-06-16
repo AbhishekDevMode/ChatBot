@@ -50,6 +50,7 @@ Deployment: Render (Backend/Full-Stack)
     │   └── main.jsx    # Client entry point
 
 ```
+```
  Installation and Setup
 To run this project locally, follow these steps:
 
@@ -84,3 +85,4 @@ Start the development server:
 
 Bash
 npm run dev
+```
