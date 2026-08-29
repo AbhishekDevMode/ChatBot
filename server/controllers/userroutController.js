@@ -29,11 +29,12 @@ export const userRegsiter = async (req, res) => {
       profilepic: gender === "male" ? profileBoy : profileGirl
     });
 
+    let token = "";
     if (newUser) {
       await newUser.save();
-      jwtToken(newUser._id, res);
+      token = jwtToken(newUser._id, res);
     } else {
-      res.status(500).send({ success: false, message: "Invalid User Data" });
+      return res.status(500).send({ success: false, message: "Invalid User Data" });
     }
     res.status(201).send({
       _id: newUser._id,
@@ -41,11 +42,12 @@ export const userRegsiter = async (req, res) => {
       username: newUser.username,
       profilepic: newUser.profilepic,
       email: newUser.email,
+      token
     });
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: error
+      message: error.message || error
     });
     console.log(error);
   }
@@ -58,13 +60,14 @@ export const userLogin = async(req, res) => {
    if(!user)return res.status(500).send({success:false,message:"Email doesn't exist"});
    const comparePass=bcryptjs.compareSync(password,user.password || "");
    if(!comparePass) return res.status(500).send({success:false,message:"Email doesn't exist"});
-   jwtToken(user._id,res);
+   const token = jwtToken(user._id,res);
    res.status(200).send({
       _id: user._id,
       fullname: user.fullname,
       username: user.username,
       profilepic: user.profilepic,
       email:user.email,
+      token,
       message:"Successfully Login"
    })
   } catch (error) {
