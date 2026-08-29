@@ -14,7 +14,11 @@ export const SocketContextProvider = ({ children }) => {
   const { authUser } = useAuth();
   useEffect(() => {
     if (authUser) {
-      const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:4000' : '/';
+      const socketUrl = import.meta.env.VITE_BACKEND_URL || (
+        window.location.hostname === 'localhost' 
+          ? 'http://localhost:4000' 
+          : 'https://chatbot-server-fryy.onrender.com'
+      );
       const socket = io(socketUrl, {
         query: {
           userId: authUser?._id

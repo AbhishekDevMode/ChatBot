@@ -34,12 +34,19 @@ app.use('/api/user', userRouter);
 // Serve static frontend in production
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
+import fs from 'fs';
+
 // SPA Catch-all route (exclude /api endpoints)
 app.use((req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ message: "API route not found" });
   }
-  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+  const indexPath = path.join(__dirname, '../client/dist', 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send("Frontend build not found. Please set your Render Build Command to 'npm run build'.");
+  }
 });
 
 server.listen(PORT, () => {
