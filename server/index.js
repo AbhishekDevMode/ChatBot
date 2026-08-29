@@ -25,10 +25,9 @@ app.use('/api/auth', authRouter);
 app.use('/api/message', messageRouter);
 app.use('/api/user', userRouter);
 
-app.get('/*', (req, res) => {
-  res.status(404).json({ message: "API endpoint not found" });
+app.use((req, res) => {
+  res.status(404).json({ message: "API route not found" });
 });
-
 server.listen(PORT, () => {
     dbConnect();
     console.log(`Server is running on port ${PORT}`);
