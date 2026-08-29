@@ -104,33 +104,29 @@ const Sidebar = ({ onSelectUser }) => {
 
     //logout
     const handelLogOut = async () => {
-
-        const confirmlogout = window.prompt("type 'UserName' To LOGOUT");
-        if (confirmlogout === authUser.username) {
-            setLoading(true)
-            try {
-                const logout = await axios.post('/api/auth/logout')
-                const data = logout.data;
-                if (data?.success === false) {
-                    setLoading(false)
-                    console.log(data?.message);
-                }
-                toast.info(data?.message)
-                localStorage.removeItem('chatapp')
-                setAuthUser(null)
-                setLoading(false)
-                navigate('/login')
-            } catch (error) {
-                setLoading(false)
-                console.log(error);
-            }
-        } else {
-            toast.info("LogOut Cancelled")
+        setLoading(true);
+        try {
+            const logout = await axios.post('/api/auth/logout');
+            const data = logout.data;
+            toast.info(data?.message || "Logged out successfully");
+            localStorage.removeItem('chatapp');
+            setAuthUser(null);
+            setLoading(false);
+            navigate('/login');
+        } catch (error) {
+            setLoading(false);
+            localStorage.removeItem('chatapp');
+            setAuthUser(null);
+            navigate('/login');
+            console.log(error);
         }
+    };
 
-    }
+    const handleImgError = (e, username = 'User') => {
+        e.target.onerror = null;
+        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(username || 'User')}&background=0D8ABC&color=fff`;
+    };
 
-    
     return (
         <div className='h-full flex flex-col w-auto'>
             <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
@@ -152,7 +148,8 @@ const Sidebar = ({ onSelectUser }) => {
                 <div className="relative group">
                     <img
                         onClick={() => setIsProfileModalOpen(true)}
-                        src={authUser?.profilepic}
+                        src={authUser?.profilepic || `https://ui-avatars.com/api/?name=${encodeURIComponent(authUser?.username || 'User')}&background=0D8ABC&color=fff`}
+                        onError={(e) => handleImgError(e, authUser?.username)}
                         className='h-10 w-10 rounded-full object-cover border-2 border-sky-400 cursor-pointer transition-transform duration-300 transform group-hover:scale-110 shadow-lg' 
                         alt="Profile"
                     />
@@ -181,7 +178,12 @@ const Sidebar = ({ onSelectUser }) => {
                                 `}>
                                 <div className={`avatar ${isOnline[index] ? 'online':''}`}>
                                     <div className="w-10 h-10 rounded-full shadow-sm">
-                                        <img src={user.profilepic} alt={user.username} className="object-cover" />
+                                        <img 
+                                            src={user.profilepic || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || 'User')}&background=0D8ABC&color=fff`} 
+                                            onError={(e) => handleImgError(e, user.username)}
+                                            alt={user.username} 
+                                            className="object-cover" 
+                                        />
                                     </div>
                                 </div>
                                 <div className='flex flex-col flex-1 min-w-0'>
@@ -213,7 +215,12 @@ const Sidebar = ({ onSelectUser }) => {
 
                                         <div className={`avatar ${isOnline[index] ? 'online':''}`}>
                                             <div className="w-10 h-10 rounded-full shadow-sm">
-                                                <img src={user.profilepic} alt={user.username} className="object-cover" />
+                                                <img 
+                                                    src={user.profilepic || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || 'User')}&background=0D8ABC&color=fff`} 
+                                                    onError={(e) => handleImgError(e, user.username)}
+                                                    alt={user.username} 
+                                                    className="object-cover" 
+                                                />
                                             </div>
                                         </div>
                                         <div className='flex flex-col flex-1 min-w-0'>

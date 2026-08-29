@@ -71,7 +71,11 @@ const ProfileModal = ({ isOpen, onClose }) => {
                 <div className="flex flex-col items-center mb-6 w-full group">
                     <div className="relative mb-4">
                         <img 
-                            src={previewUrl} 
+                            src={previewUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(authUser?.username || 'User')}&background=0D8ABC&color=fff`} 
+                            onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(authUser?.username || 'User')}&background=0D8ABC&color=fff`;
+                            }}
                             alt="Profile Preview" 
                             className="w-32 h-32 rounded-full object-cover border-4 border-sky-500 shadow-[0_0_15px_rgba(14,165,233,0.3)] transition-transform duration-300 group-hover:scale-105"
                         />
