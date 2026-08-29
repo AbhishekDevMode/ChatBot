@@ -20,14 +20,13 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// API Routes
 app.use('/api/auth', authRouter);
 app.use('/api/message', messageRouter);
 app.use('/api/user', userRouter);
 
-app.use(express.static(path.join(__dirname, "../client/dist")));
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+app.get('/*', (req, res) => {
+  res.status(404).json({ message: "API endpoint not found" });
 });
 
 server.listen(PORT, () => {
