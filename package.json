@@ -5,8 +5,8 @@
   "scripts": {
     "install-server": "npm install --prefix server",
     "install-client": "npm install --prefix client",
-    "install": "npm run install-server && npm run install-client",
-    "build": "npm run build --prefix client",
-    "start": "npm start --prefix server"
+    "install-deps": "npm run install-server && npm run install-client",
+    "build": "npm run install-deps && npm run build --prefix client",
+    "start": "node server/index.js"
   }
 }
