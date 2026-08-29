@@ -24,7 +24,10 @@ const Sidebar = ({ onSelectUser }) => {
     const { onlineUser , socket} = useSocketContext();
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
-    const nowOnline = chatUser.map((user)=>(user._id));
+    const safeChatUser = Array.isArray(chatUser) ? chatUser.filter(Boolean) : [];
+    const safeSearchUser = Array.isArray(searchUser) ? searchUser.filter(Boolean) : [];
+
+    const nowOnline = safeChatUser.map((user)=>(user?._id)).filter(Boolean);
     //chats function
     const isOnline = nowOnline.map(userId => onlineUser.includes(userId));
 
@@ -43,15 +46,17 @@ const Sidebar = ({ onSelectUser }) => {
             try {
                 const chatters = await axios.get(`/api/user/currentchatters`)
                 const data = chatters.data;
-                if (data.success === false) {
-                    setLoading(false)
-                    console.log(data.message);
+                if (Array.isArray(data)) {
+                    setChatUser(data);
+                } else {
+                    console.log("Current chatters data is not an array:", data);
+                    setChatUser([]);
                 }
                 setLoading(false)
-                setChatUser(data)
 
             } catch (error) {
                 setLoading(false)
+                setChatUser([])
                 console.log(error);
             }
         }
@@ -65,18 +70,20 @@ const Sidebar = ({ onSelectUser }) => {
         try {
             const search = await axios.get(`/api/user/search?search=${searchInput}`);
             const data = search.data;
-            if (data.success === false) {
-                setLoading(false)
-                console.log(data.message);
+            if (Array.isArray(data)) {
+                if (data.length === 0) {
+                    toast.info("User Not Found")
+                } else {
+                    setSearchuser(data)
+                }
+            } else {
+                console.log("Search data is not an array:", data);
+                setSearchuser([]);
             }
             setLoading(false)
-            if (data.length === 0) {
-                toast.info("User Not Found")
-            } else {
-                setSearchuser(data)
-            }
         } catch (error) {
             setLoading(false)
+            setSearchuser([])
             console.log(error);
         }
     }
@@ -157,7 +164,7 @@ const Sidebar = ({ onSelectUser }) => {
             
             {/* User List */}
             <div className="flex-1 overflow-y-auto overflow-x-hidden pr-1 -mr-1 mt-2 space-y-1">
-                {searchUser?.length > 0 ? (
+                {safeSearchUser.length > 0 ? (
                     <>
                         <div className="flex items-center gap-2 mb-2 px-1">
                             <button onClick={handSearchback} className='p-1.5 rounded-full hover:bg-gray-700 text-gray-300 transition-colors'>
@@ -165,7 +172,7 @@ const Sidebar = ({ onSelectUser }) => {
                             </button>
                             <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Search Results</span>
                         </div>
-                        {searchUser.map((user, index) => (
+                        {safeSearchUser.map((user, index) => (
                             <div
                                 key={user._id}
                                 onClick={() => handelUserClick(user)}
@@ -187,7 +194,7 @@ const Sidebar = ({ onSelectUser }) => {
                     </>
                 ) : (
                     <>
-                        {chatUser.length === 0 ? (
+                        {safeChatUser.length === 0 ? (
                             <div className='flex flex-col items-center justify-center h-full text-center px-4'>
                                 <span className="text-4xl mb-3">👋</span>
                                 <h1 className='font-bold text-lg text-gray-300 mb-1'>It's quiet here</h1>
@@ -196,7 +203,7 @@ const Sidebar = ({ onSelectUser }) => {
                         ) : (
                             <>
                                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-2 mb-2 block mt-2">Recent Chats</span>
-                                {chatUser.map((user, index) => (
+                                {safeChatUser.map((user, index) => (
                                     <div
                                         key={user._id}
                                         onClick={() => handelUserClick(user)}

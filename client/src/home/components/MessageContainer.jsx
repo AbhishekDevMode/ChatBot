@@ -67,6 +67,8 @@ const MessageContainer = ({ onBackUser }) => {
     return () => setSelectedConversation(null);
   }, [setSelectedConversation]);
 
+  const safeMessages = Array.isArray(messages) ? messages : [];
+
   useEffect(() => {
     const getMessages = async () => {
       setLoading(true);
@@ -75,14 +77,16 @@ const MessageContainer = ({ onBackUser }) => {
           `/api/message/${selectedConversation?._id}`
         );
         const data = await get.data;
-        if (data.success === false) {
-          setLoading(false);
-          console.log(data.message);
+        if (Array.isArray(data)) {
+          setMessage(data);
+        } else {
+          console.log("Get messages data is not an array:", data);
+          setMessage([]);
         }
         setLoading(false);
-        setMessage(data);
       } catch (error) {
         setLoading(false);
+        setMessage([]);
         console.log(error);
       }
     };
@@ -104,13 +108,13 @@ const MessageContainer = ({ onBackUser }) => {
         { message: sendData }
       );
       const data = await res.data;
-      if (data.success === false) {
-        setSending(false);
-        console.log(data.message);
+      if (data && data._id) {
+        setMessage((prev) => [...(Array.isArray(prev) ? prev : []), data]);
+        setSnedData("");
+      } else {
+        console.log("Send message error response:", data);
       }
       setSending(false);
-      setSnedData("");
-      setMessage([...messages, data]);
     } catch (error) {
       setSending(false);
       console.log(error);
@@ -121,7 +125,7 @@ const MessageContainer = ({ onBackUser }) => {
     try {
       const res = await axios.delete(`/api/message/single/${messageId}`);
       if (res.data.success) {
-        setMessage(messages.filter(msg => msg._id !== messageId));
+        setMessage((prev) => (Array.isArray(prev) ? prev.filter(msg => msg._id !== messageId) : []));
         toast.success("Message deleted");
       }
     } catch (error) {
@@ -134,9 +138,9 @@ const MessageContainer = ({ onBackUser }) => {
     try {
       const res = await axios.post(`/api/message/like/${messageId}`);
       if (res.data.success) {
-        setMessage(messages.map(msg => 
+        setMessage((prev) => (Array.isArray(prev) ? prev.map(msg => 
           msg._id === messageId ? { ...msg, likes: res.data.likes } : msg
-        ));
+        ) : []));
       }
     } catch (error) {
       console.error(error);
@@ -185,13 +189,13 @@ const MessageContainer = ({ onBackUser }) => {
               <div className="flex w-full h-full items-center justify-center">
                 <span className="loading loading-spinner text-sky-500"></span>
               </div>
-            ) : messages?.length === 0 ? (
+            ) : safeMessages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full opacity-50">
                 <span className="text-4xl mb-3">💬</span>
                 <p className="text-gray-300">Say hello to {selectedConversation?.username}!</p>
               </div>
             ) : (
-              messages?.map((message) => {
+              safeMessages.map((message) => {
                 const isMe = message.senderId === authUser._id;
                 const hasLiked = message.likes && message.likes.includes(authUser._id);
                 return (
