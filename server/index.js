@@ -35,7 +35,7 @@ app.use('/api/user', userRouter);
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 // SPA Catch-all route (exclude /api endpoints)
-app.get('*', (req, res) => {
+app.use((req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ message: "API route not found" });
   }
